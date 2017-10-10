@@ -62,13 +62,32 @@ def make_text(chains):
     """Return text from chains."""
 
     words = []
+    #creating a list of all keys from the chains dictionary
+    all_keys = chains.keys()
+    #choosing a random key, using the choice() module
+    key = choice(all_keys)
 
-    # your code goes here
+    #appending the first word of the key tuple to the 'words' list
+    words.append(key[0])
 
+
+    while True:
+        #if the key exists in the chains dictionary
+        if key in chains:
+            #create a new link (tuple)
+            new_key = (key[1], choice(chains[key]))
+            #append the link to the 'words' list
+            words.append(new_key[1])
+            #rebind key to the new link
+            key = new_key
+
+        else:
+            break
+    #return the list of links as a string
     return " ".join(words)
 
 
-input_path = "green-eggs.txt"
+input_path = "gettysburg.txt"
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
