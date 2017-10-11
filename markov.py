@@ -115,8 +115,6 @@ def shorten_text(markov_chain_text):
 
     return markov_chain_text
 
-#make new function that checks the legnth of make_text output 
-#and if greater than 140, initiates while loop, while > 180 calls make_text again
 
 #use sys.arg to pass multiple files as arguments, from the terminal
 input_paths = sys.argv[1:]
