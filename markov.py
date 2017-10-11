@@ -2,21 +2,22 @@
 
 from random import choice
 
+import sys
 
-def open_and_read_file(file_path):
+str_punctuation = ['.', '!', '?']
+
+
+def open_and_read_file(file_names):
     """Take file path as string; return text as string.
 
     Takes a string that is a file path, opens the file, and turns
     the file's contents as one string of text.
     """
-
-    with open(file_path) as suess_text:
-        text_string = suess_text.read()
-        
+    for file_path in file_names:
+        with open(file_path) as markov_text:
+            text_string = markov_text.read()   
 
     return text_string
-
-print open_and_read_file("green-eggs.txt")
 
 
 def make_chains(text_string):
@@ -67,9 +68,15 @@ def make_text(chains):
     #choosing a random key, using the choice() module
     key = choice(all_keys)
 
-    #appending the first word of the key tuple to the 'words' list
-    words.append(key[0])
-
+    while True:
+        #check if first character of first work is capitalized
+        if key[0][0].isupper():
+            #convert tuple to a list and set as the initial 'words' list
+            words = list(key)
+            break
+        #if first character not capitalized, choose another random key
+        else:
+            key = choice(all_keys)
 
     while True:
         #if the key exists in the chains dictionary
@@ -80,22 +87,50 @@ def make_text(chains):
             words.append(new_key[1])
             #rebind key to the new link
             key = new_key
-
+            #if key ends with punctuation mark, stop
+            if key[1][-1] in str_punctuation:
+                break
         else:
             break
+
+    markov_chain_text = " ".join(words)
+
     #return the list of links as a string
-    return " ".join(words)
+    return markov_chain_text
 
+def shorten_text(markov_chain_text):
+    """ Takes a markov chain and returns a chain with less than 140 characters
+        (to post to Twitter). """
 
-input_path = "gettysburg.txt"
+    while True:
+        #check the length of the markov chain
+        if len(markov_chain_text) > 140:
+            #if greater than 140 chars, generate a new chain
+            new_chain = make_text(chains)
+            #set value of chain to test to new chain
+            markov_chain_text = new_chain
+        else:
+            #if less than 140, all good!
+            break
+
+    return markov_chain_text
+
+#make new function that checks the legnth of make_text output 
+#and if greater than 140, initiates while loop, while > 180 calls make_text again
+
+#use sys.arg to pass multiple files as arguments, from the terminal
+input_paths = sys.argv[1:]
 
 # Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+input_text = open_and_read_file(input_paths)
 
 # Get a Markov chain
 chains = make_chains(input_text)
 
 # Produce random text
-random_text = make_text(chains)
+markov_chain_text = make_text(chains)
 
-print random_text
+# Check char limit for twitter
+markov_tweet = shorten_text(markov_chain_text)
+
+print markov_tweet
